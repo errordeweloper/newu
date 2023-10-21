@@ -1,6 +1,7 @@
 import { RootEntity } from 'src/common/config/entity/root.entity';
 import { UserRole } from 'src/common/config/enum/user-role.enum';
-import { Entity, Column } from 'typeorm';
+import { Post } from 'src/modules/post/entities/post.entity';
+import { Entity, Column, ManyToMany } from 'typeorm';
 
 @Entity()
 export class User extends RootEntity {
@@ -21,4 +22,7 @@ export class User extends RootEntity {
 
   @Column({nullable:true})
   refresh_token: string
+
+  @ManyToMany(() => Post, (post) => post.user)
+  posts: Post[]
 }
