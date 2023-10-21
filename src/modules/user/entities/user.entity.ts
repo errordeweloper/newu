@@ -1,8 +1,9 @@
+import { RootEntity } from 'src/common/config/entity/root.entity';
 import { UserRole } from 'src/common/config/enum/user-role.enum';
 import { Entity, Column } from 'typeorm';
 
 @Entity()
-export class User {
+export class User extends RootEntity {
   @Column()
   firstname: string
 
@@ -16,8 +17,8 @@ export class User {
   role: string
 
   @Column()
-  hashed_password: string
+  password: string
 
-  @Column()
-  logged_out: boolean
+  @Column({nullable:true})
+  refresh_token: string
 }
