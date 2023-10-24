@@ -1,6 +1,6 @@
 import { RootEntity } from "src/common/config/entity/root.entity";
 import { User } from "src/modules/user/entities/user.entity";
-import { Column, Entity, ManyToMany } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany } from "typeorm";
 
 @Entity()
 export class Post extends RootEntity {
@@ -14,5 +14,6 @@ export class Post extends RootEntity {
   desc: string
 
   @ManyToMany(() => User, (user) => user.posts, {cascade:true,})
-  user: User[]
+  @JoinTable()
+  users: User[]
 }

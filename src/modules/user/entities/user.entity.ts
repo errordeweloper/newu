@@ -23,6 +23,6 @@ export class User extends RootEntity {
   @Column({nullable:true})
   refresh_token: string
 
-  @ManyToMany(() => Post, (post) => post.user)
+  @ManyToMany(() => Post, (post) => post.users)
   posts: Post[]
 }

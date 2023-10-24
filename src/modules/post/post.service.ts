@@ -1,26 +1,80 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Post } from './entities/post.entity';
+import { Repository } from 'typeorm';
+import { User } from '../user/entities/user.entity';
+import { FindAllPostDto } from './dto/findAll-post.dto';
+import { Pagination } from 'src/common/config/util/pagination';
 
 @Injectable()
 export class PostService {
-  create(createPostDto: CreatePostDto) {
-    return 'This action adds a new post';
+  constructor(
+    @InjectRepository(Post) private readonly postRepo: Repository<Post>,
+    @InjectRepository(User) private readonly userRepo: Repository<User>
+  ){}
+  
+  async create(createPostDto: CreatePostDto) {
+    try {
+      const {desc, media, title, users} = createPostDto
+      const arrayOfUserObjects = []
+      for(const id of users){
+        const user = await this.userRepo.findOneBy({id})
+        if(!users){
+          throw new NotFoundException(`User with id: ${id} not found`)
+        }
+        arrayOfUserObjects.push(user)
+      }
+      const post = this.postRepo.create({desc, media, title, users: arrayOfUserObjects})
+      await this.postRepo.save(post)
+      return 'gooooo'
+    } catch (error) {
+      throw error
+    }
   }
 
-  findAll() {
-    return `This action returns all post`;
+  async findAll(findAllPostDto: FindAllPostDto) {
+    try {
+      const totalPostCount = await this.postRepo.count()
+      const {page, limit} = findAllPostDto;
+      const pagination = new Pagination(limit, )  
+    } catch (error) {
+      throw error
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} post`;
+  async findOne(id: number) {
+    try {
+      const post = await this.postRepo.findOneBy({id})
+      return post
+    } catch (error) {
+      throw error
+    }
   }
 
-  update(id: number, updatePostDto: UpdatePostDto) {
-    return `This action updates a #${id} post`;
+  async update(id: number, updatePostDto: UpdatePostDto) {
+    try {
+      const {desc, title} = updatePostDto
+      const post = await this.postRepo.findOneBy({id})
+      if(!post){
+        throw new NotFoundException(`Post with id: ${id} not found`)
+      }
+      this.postRepo.update({id}, {desc})
+    } catch (error) {
+      throw error
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} post`;
+  async remove(id: number) {
+    try {
+      const post = await this.postRepo.findOneBy({id})
+      if(!post){
+        throw new NotFoundException(`Post with id: ${id} not found`)
+      }
+      this.postRepo.delete({id})
+    } catch (error) {
+      throw error
+    }
   }
 }
