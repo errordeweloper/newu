@@ -1,6 +1,5 @@
 import { ISimplify } from "../interfaces/paginationSimplify";
 
-
 export class Pagination {
     public limit: number;
     public currentPage: number;

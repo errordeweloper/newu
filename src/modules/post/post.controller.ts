@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestj
 import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { ApiQuery } from '@nestjs/swagger';
 
 @Controller('post')
 export class PostController {
@@ -13,6 +14,8 @@ export class PostController {
   }
 
   @Get()
+  @ApiQuery({name: 'limit', required: false})
+  @ApiQuery({name: 'page', required: false})
   findAll(@Query() query) {
     return this.postService.findAll(query);
   }
