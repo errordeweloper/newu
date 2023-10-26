@@ -1,17 +1,22 @@
-import { IsString, IsOptional, IsEmail, IsStrongPassword } from "class-validator"
-import { UserRole } from "src/common/config/enum/user-role.enum"
+import { ApiProperty } from "@nestjs/swagger"
+import { IsString, IsOptional, IsUrl, IsInt, IsNumber } from "class-validator"
 
 export class CreatePostDto {
+  @ApiProperty()
   @IsString()
   title: string
 
-  @IsString()
+  @ApiProperty({default: 'string.jpg'})
+  @IsUrl()
   @IsOptional()
   media: string
 
-  @IsEmail(UserRole)
+  @ApiProperty()
+  @IsString()
   desc: string
 
-  @IsStrongPassword()
+  @ApiProperty({default:[7, 8, 9]})
+  @IsNumber({maxDecimalPlaces: 0}, {each: true})
+  // @IsInt({each: true})
   users: number[]
 }

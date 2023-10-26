@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { User } from '../user/entities/user.entity';
 import { FindAllPostDto } from './dto/findAll-post.dto';
 import { Pagination } from 'src/common/config/util/pagination';
+import { ApiResponse } from 'src/common/config/http/ApiResponse';
 
 @Injectable()
 export class PostService {
@@ -38,7 +39,15 @@ export class PostService {
     try {
       const totalPostCount = await this.postRepo.count()
       const {page, limit} = findAllPostDto;
-      const pagination = new Pagination(limit, )  
+      const pagination = new Pagination(limit, page, totalPostCount)
+      
+      const posts = await this.postRepo.find({
+        take: pagination.limit,
+        skip: pagination.offset,
+        relations: ['users'],
+        loadRelationIds: true
+      })
+      return new ApiResponse(posts, pagination)
     } catch (error) {
       throw error
     }
