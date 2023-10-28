@@ -6,8 +6,8 @@ import { Post } from './entities/post.entity';
 import { Repository } from 'typeorm';
 import { User } from '../user/entities/user.entity';
 import { FindAllPostDto } from './dto/findAll-post.dto';
-import { Pagination } from 'src/common/config/util/pagination';
-import { ApiResponse } from 'src/common/config/http/ApiResponse';
+import { Pagination } from 'src/common/util/pagination';
+import { ApiResponse } from 'src/common/http/ApiResponse';
 
 @Injectable()
 export class PostService {

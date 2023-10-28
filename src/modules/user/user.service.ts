@@ -1,10 +1,13 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { encryptWithAES } from 'src/common/config/util/hashing.config';
+import { encryptWithAES } from 'src/common/util/hashing.config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
+import { Pagination } from 'src/common/util/pagination';
+import { ApiResponse } from 'src/common/http/ApiResponse';
+import { FindAllUserDto } from './dto/findAll-user.dto';
 
 @Injectable()
 export class UserService {
@@ -13,19 +16,35 @@ export class UserService {
     try {
       createUserDto.password = encryptWithAES(createUserDto.password)
       const user = this.userRepo.create(createUserDto)
-      this.userRepo.save(user)
+      this.userRepo.save(user)  
     } catch (error) {
       throw error
     }
   }
 
-  findAll() {
-    return `This action returns all user`;
+  async findAll(findAllUserDto: FindAllUserDto) {
+    try {
+      const totalPostCount = await this.userRepo.count()
+      const {page, limit} = findAllUserDto;
+      const pagination = new Pagination(limit, page, totalPostCount)
+      
+      const posts = await this.userRepo.find({
+        take: pagination.limit,
+        skip: pagination.offset,
+        relations: ['posts'],
+        loadRelationIds: true
+      })
+      return new ApiResponse(posts, pagination)
+    } catch (error) {
+      throw error
+    }
   }
 
   async findOne(id: number) {
     try {
       const user = await this.userRepo.findOneBy({id})
+      console.log(await this.userRepo.find());
+      
       return user
     } catch (error) {
       throw error
@@ -35,7 +54,7 @@ export class UserService {
   async update(id: number, updateUserDto: UpdateUserDto) {
     try {
       const {email} = updateUserDto
-      if (updateUserDto.email) {
+      if (email) {
         const user = await this.userRepo.findOneBy({email: updateUserDto.email})
         if (user) {
           throw new BadRequestException(`User with email: ${email} already exists`)

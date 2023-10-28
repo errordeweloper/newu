@@ -11,7 +11,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {logger: ['error', 'warn']});
   app.useGlobalPipes(new ValidationPipe({whitelist: true, transform: true}))
   const document = SwaggerModule.createDocument(app, config)
-  SwaggerModule.setup('gram', app, document)
+  SwaggerModule.setup('Umid', app, document)
   await app.listen(port, () => console.log(`Server listen port ${port} 🤘`));
 }
 bootstrap();

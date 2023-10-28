@@ -1,5 +1,5 @@
 import * as cryptoJS from 'crypto-js'
-import { env } from '../env.config';
+import { env } from '../config/env.config';
 
 export const encryptWithAES = (text) => {
   const passphere = env.PASS_HASH_SECRET

@@ -1,4 +1,4 @@
-import { RootEntity } from "src/common/config/entity/root.entity";
+import { RootEntity } from "src/common/entity/root.entity";
 import { User } from "src/modules/user/entities/user.entity";
 import { Column, Entity, JoinTable, ManyToMany } from "typeorm";
 
